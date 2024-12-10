@@ -30,7 +30,7 @@ const ShootingGame = () => {
       bulletSize: 10,
       playerColor: '#4CAF50',
       enemyColor: '#F44336',
-      bulletColor: '#2196F3'
+      bulletColor: '#2196F3',
     };
 
     // ゲーム状態の更新
@@ -59,8 +59,8 @@ const ShootingGame = () => {
 
       // 敵の生成と移動
       if (Math.random() < 0.03) createEnemy();
-      
-      // 弾丸と敵の当たり判定をここに移動
+
+      // 弾丸と敵の当たり判定
       for (let i = bullets.length - 1; i >= 0; i--) {
         for (let j = enemies.length - 1; j >= 0; j--) {
           const bullet = bullets[i];
@@ -80,7 +80,7 @@ const ShootingGame = () => {
             
             // スコア更新
             setScore(prevScore => prevScore + 1);
-            
+
             // ループを抜ける（1つの弾丸は1体の敵にのみ当たる）
             break;
           }
@@ -91,7 +91,6 @@ const ShootingGame = () => {
       for (let i = enemies.length - 1; i >= 0; i--) {
         const enemy = enemies[i];
         enemy.y += 3;
-        
         ctx.fillStyle = config.enemyColor;
         ctx.fillRect(enemy.x, enemy.y, config.enemySize, config.enemySize);
 
@@ -105,7 +104,6 @@ const ShootingGame = () => {
       for (let i = bullets.length - 1; i >= 0; i--) {
         const bullet = bullets[i];
         bullet.y -= 5;
-        
         ctx.fillStyle = config.bulletColor;
         ctx.fillRect(bullet.x, bullet.y, config.bulletSize, config.bulletSize);
 
@@ -146,7 +144,7 @@ const ShootingGame = () => {
   };
 
   // 弾丸の生成
-  const createBullet = (event) => {
+  const createBullet = () => {
     if (gameOver) {
       initGame();
       setGameOver(false);
@@ -164,7 +162,7 @@ const ShootingGame = () => {
   const handlePlayerMove = (event) => {
     event.preventDefault();
     const canvas = canvasRef.current;
-    const { player, config, isDragging } = gameStateRef.current;
+    const { player, config } = gameStateRef.current;
 
     // タッチイベントとマウスイベントの座標を取得
     const clientX = event.touches 
@@ -178,10 +176,7 @@ const ShootingGame = () => {
     const newX = clientX - rect.left - config.playerSize / 2;
     
     // プレイヤーの移動範囲を制限
-    const limitedX = Math.max(
-      0, 
-      Math.min(newX, config.width - config.playerSize)
-    );
+    const limitedX = Math.max(0, Math.min(newX, config.width - config.playerSize));
 
     // ゲーム状態を更新
     if (player) {
@@ -199,8 +194,7 @@ const ShootingGame = () => {
   // ドラッグ中
   const handleDragMove = (event) => {
     event.preventDefault();
-    const { isDragging } = gameStateRef.current;
-    if (isDragging) {
+    if (gameStateRef.current.isDragging) {
       handlePlayerMove(event);
     }
   };
@@ -215,6 +209,8 @@ const ShootingGame = () => {
   useEffect(() => {
     initGame();
     const canvas = canvasRef.current;
+
+    canvas.style.touchAction = 'none';
 
     // マウスイベントリスナー
     canvas.addEventListener('mousedown', handleDragStart);
@@ -255,7 +251,7 @@ const ShootingGame = () => {
       <canvas 
         ref={canvasRef} 
         onClick={createBullet}
-        className="border-2 border-gray-300 touch-none"
+        className="border-2 border-gray-300"
       />
       <p className="mt-2 text-sm text-gray-600">
         プレイヤーをドラッグまたはタッチして移動、クリックで弾を撃つ
