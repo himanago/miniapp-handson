@@ -390,7 +390,7 @@ const ShootingGame = () => {
       <div className="mb-4">
         <h2 className="text-xl font-bold">クリックシューティングゲーム</h2>
         <p>スコア: {score}</p>
-        {gameOver && <div>ゲームオーバー！クリックでリスタート<button onclick={handleShare}>シェア！</button></div>}
+        {gameOver && <div>ゲームオーバー！クリックでリスタート<button onClick={handleShare}>シェア！</button></div>}
       </div>
       <canvas 
         ref={canvasRef} 
